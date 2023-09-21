@@ -1,0 +1,120 @@
+import json
+with open('results.json', 'r') as json_file:
+    data = json.load(json_file)
+
+# Task 1: Find the total number of videos
+total_videos = len(data)
+print(f"Total number of videos: {total_videos}")
+
+# Task 3: Find the number of frames for each video and missing frames
+for video in data:
+    video_id = video['id']
+    frames = video['frames']
+    num_frames = len(frames)
+    missing_frames = [i for i in range(1, num_frames + 1) if i not in [frame['id'] for frame in frames]]
+    
+    print(f"Video {video_id}:")
+    print(f"Number of frames: {num_frames}")
+    print(f"Missing frames: {missing_frames}")
+
+# Task 4: Find the maximum number of vehicles and people in each video
+for video in data:
+    video_id = video['id']
+    frames = video['frames']
+    max_vehicle_count = max(frame['vehicle count'] for frame in frames)
+    max_person_count = max(frame['person count'] for frame in frames)
+    
+    print(f"Video {video_id}:")
+    print(f"Max vehicle count: {max_vehicle_count}")
+    print(f"Max person count: {max_person_count}")
+
+# Task 5: Find the number of categories of people and list the categories
+unique_categories = set()
+for video in data:
+    frames = video['frames']
+    for frame in frames:
+        if 'Face data' in frame:
+            for face_data in frame['Face data']:
+                category = face_data['category']
+                unique_categories.add(category)
+
+num_categories = len(unique_categories)
+print(f"Number of categories of people: {num_categories}")
+print(f"List of categories: {', '.join(unique_categories)}")
+
+# Task 6: Find the people belonging to each category
+category_people = {}
+
+for video in data:
+    frames = video['frames']
+    for frame in frames:
+        if 'Face data' in frame:
+            for face_data in frame['Face data']:
+                category = face_data['category']
+                person_data = face_data['person_data']
+                
+                if category not in category_people:
+                    category_people[category] = []
+                
+                category_people[category].append(person_data)
+QUESTION 1:
+import json
+with open('results.json', 'r') as json_file:
+    data = json.load(json_file)
+
+# Task 1: Find the total number of videos
+total_videos = len(data)
+print(f"Total number of videos: {total_videos}")
+
+# Task 3: Find the number of frames for each video and missing frames
+for video in data:
+    video_id = video['id']
+    frames = video['frames']
+    num_frames = len(frames)
+    missing_frames = [i for i in range(1, num_frames + 1) if i not in [frame['id'] for frame in frames]]
+    
+    print(f"Video {video_id}:")
+    print(f"Number of frames: {num_frames}")
+    print(f"Missing frames: {missing_frames}")
+
+# Task 4: Find the maximum number of vehicles and people in each video
+for video in data:
+    video_id = video['id']
+    frames = video['frames']
+    max_vehicle_count = max(frame['vehicle count'] for frame in frames)
+    max_person_count = max(frame['person count'] for frame in frames)
+    
+    print(f"Video {video_id}:")
+    print(f"Max vehicle count: {max_vehicle_count}")
+    print(f"Max person count: {max_person_count}")
+
+# Task 5: Find the number of categories of people and list the categories
+unique_categories = set()
+for video in data:
+    frames = video['frames']
+    for frame in frames:
+        if 'Face data' in frame:
+            for face_data in frame['Face data']:
+                category = face_data['category']
+                unique_categories.add(category)
+
+num_categories = len(unique_categories)
+print(f"Number of categories of people: {num_categories}")
+print(f"List of categories: {', '.join(unique_categories)}")
+
+# Task 6: Find the people belonging to each category
+category_people = {}
+
+for video in data:
+    frames = video['frames']
+    for frame in frames:
+        if 'Face data' in frame:
+            for face_data in frame['Face data']:
+                category = face_data['category']
+                person_data = face_data['person_data']
+                
+                if category not in category_people:
+                    category_people[category] = []
+                
+                category_people[category].append(person_data)
+
