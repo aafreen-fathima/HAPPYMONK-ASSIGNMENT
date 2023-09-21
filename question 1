@@ -1,0 +1,31 @@
+import multiprocessing
+
+# Function to calculate the sum of squares for a given chunk of numbers
+def sum_of_squares(chunk):
+    return sum(x ** 2 for x in chunk)
+
+# Function to split the input list into smaller chunks
+def chunk_list(input_list, chunk_size):
+    for i in range(0, len(input_list), chunk_size):
+        yield input_list[i:i + chunk_size]
+
+if __name__ == "__main__":
+    # Input list of numbers
+    numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    # Number of worker processes
+    num_processes = multiprocessing.cpu_count()
+
+    # Split the input list into chunks
+    chunk_size = len(numbers) // num_processes
+    chunks = list(chunk_list(numbers, chunk_size))
+
+    # Create a pool of worker processes
+    with multiprocessing.Pool(processes=num_processes) as pool:
+        # Calculate the sum of squares for each chunk in parallel
+        results = pool.map(sum_of_squares, chunks)
+
+    # Calculate the final sum of squares by combining results
+    total_sum_of_squares = sum(results)
+
+    print(f"Sum of squares: {total_sum_of_squares}")
