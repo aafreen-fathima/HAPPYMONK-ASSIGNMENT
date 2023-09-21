@@ -1,0 +1,51 @@
+import cv2
+import time
+
+# Function to calculate frame timestamp, FPS, and latency
+def calculate_metrics(prev_time):
+    current_time = time.time()
+    frame_timestamp = current_time
+    fps = 1 / (current_time - prev_time)
+    latency = current_time - frame_timestamp
+    return current_time, frame_timestamp, fps, latency
+
+camera_url = 0  # Use 0 for the default camera (change if using an IP camera)
+max_reconnect_attempts = 5  # Maximum number of reconnection attempts
+reconnect_attempts = 0
+
+while True:
+    cap = cv2.VideoCapture(camera_url)
+    if not cap.isOpened():
+        print("Camera is offline.")
+        reconnect_attempts += 1
+        time.sleep(5)  # Wait before reconnection attempt
+        if reconnect_attempts > max_reconnect_attempts:
+            print("Max reconnection attempts reached. Exiting.")
+            break
+        continue
+
+    print("Camera is online.")
+    prev_time = time.time()
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Camera disconnected.")
+            break
+        current_time, frame_timestamp, fps, latency = calculate_metrics(prev_time)
+        prev_time = current_time
+        cv2.imshow("Camera Feed", frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):  # Press 'q' to exit
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+    print(f"Camera was offline for {reconnect_attempts * 5} seconds.")
+    print(f"Reconnection attempts: {reconnect_attempts}")
+
+    # Reset reconnection attempts
+    reconnect_attempts = 0
+
+# Clean up OpenCV windows and release resources
+cv2.destroyAllWindows()
