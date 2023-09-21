@@ -1,0 +1,30 @@
+import requests
+import json
+url = "https://jsonplaceholder.typicode.com/todos"
+response = requests.get(url)
+data = response.json()
+users = {}
+tasks = {}
+for task in data:
+    user_id = task['userId']
+    task_id = task['id']
+    title = task['title']
+    completed = task['completed']
+    if user_id in users:
+        users[user_id]['tasks'].append(task_id)
+    else:
+        users[user_id] = {'tasks': [task_id], 'completed_tasks': 0, 'incomplete_tasks': 0}
+    if completed:
+        users[user_id]['completed_tasks'] += 1
+    else:
+        users[user_id]['incomplete_tasks'] += 1
+num_users = len(users)
+sorted_users = sorted(users.items(), key=lambda x: x[1]['completed_tasks'], reverse=True)
+print(f"Number of users: {num_users}\n")
+
+for user_id, user_info in sorted_users:
+    print(f"User {user_id}:")
+    print(f"Number of tasks: {len(user_info['tasks'])}")
+    print(f"Completed tasks: {user_info['completed_tasks']}")
+    print(f"Incomplete tasks: {user_info['incomplete_tasks']}\n")
+
