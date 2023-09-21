@@ -1,0 +1,61 @@
+import requests
+import json
+from collections import Counter
+
+# Define the API endpoint
+api_endpoint = "https://api.example.com/books"
+
+# Function to fetch data from the API with pagination
+def fetch_books(api_url):
+    all_books = []
+    page = 1
+    while True:
+        response = requests.get(api_url, params={"page": page, "per_page": 100})
+        if response.status_code == 200:
+            page_data = response.json()
+            if not page_data:
+                break
+            all_books.extend(page_data)
+            page += 1
+        else:
+            print(f"Error fetching data. Status Code: {response.status_code}")
+            break
+    return all_books
+
+# Function to analyze the retrieved books data
+def analyze_books(books):
+    # Count the total number of books
+    total_books = len(books)
+
+    # Calculate the average publication year
+    publication_years = [book["publication_year"] for book in books if "publication_year" in book]
+    avg_publication_year = round(sum(publication_years) / len(publication_years))
+
+    # Find the most prolific author
+    author_counter = Counter([book["author"] for book in books if "author" in book])
+    most_prolific_author, author_books_count = author_counter.most_common(1)[0]
+
+    # Find the top 5 genres with the most books
+    genre_counter = Counter([book["genre"] for book in books if "genre" in book])
+    top_genres = genre_counter.most_common(5)
+
+    return total_books, avg_publication_year, most_prolific_author, top_genres
+
+if __name__ == "__main__":
+    try:
+        # Fetch books data from the API
+        books_data = fetch_books(api_endpoint)
+
+        # Analyze the retrieved books data
+        num_books, avg_year, prolific_author, top_genre = analyze_books(books_data)
+
+        # Print the results
+        print(f"Number of books: {num_books}")
+        print(f"Average publication year: {avg_year}")
+        print(f"Most prolific author: {prolific_author} ({author_books_count} books)")
+        print("Top 5 genres with the most books:")
+        for idx, (genre, count) in enumerate(top_genre, start=1):
+            print(f"{idx}. {genre} ({count} books)")
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
